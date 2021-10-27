@@ -1,5 +1,5 @@
 import React, { createContext } from 'react'
-import { Usuario } from '../interfaces/appInterfaces'
+import { Usuario } from '../../interfaces/appInterfaces'
 
 type AuthContextType = {
   errorMessage: string
@@ -13,3 +13,7 @@ type AuthContextType = {
 }
 
 const AuthContext = createContext({} as AuthContextType)
+
+export const AuthProvider: React.FC = ({ children }) => {
+  return <AuthContext.Provider value={{}}>{children}</AuthContext.Provider>
+}
