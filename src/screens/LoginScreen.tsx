@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useContext } from 'react'
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -13,18 +13,21 @@ import { loginStyles } from '../theme/loginTheme'
 import Background from '../components/Background'
 import WhiteLogo from '../components/WhiteLogo'
 import { useForm } from '../hooks/useForm'
+import { AuthContext } from '../context/auth/AuthContext'
 
 interface LoginScreenProps extends StackScreenProps<any, any> {}
 
 const LoginScreen: FC<LoginScreenProps> = ({ navigation }) => {
+  const { signIn } = useContext(AuthContext)
+
   const { email, password, onChange } = useForm({
     email: '',
     password: ''
   })
 
   const onLogin = () => {
-    console.log({ email, password })
     Keyboard.dismiss()
+    signIn({ correo: email, password })
   }
 
   return (
