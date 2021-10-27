@@ -1,5 +1,6 @@
-import React, { createContext } from 'react'
+import React, { createContext, useReducer } from 'react'
 import { Usuario } from '../../interfaces/appInterfaces'
+import { authReducer, IAuthState } from './authReducer'
 
 type AuthContextType = {
   errorMessage: string
@@ -12,8 +13,34 @@ type AuthContextType = {
   removeError: () => void
 }
 
+const authInitialState: IAuthState = {
+  status: 'checking',
+  token: null,
+  user: null,
+  errorMessage: ''
+}
+
 const AuthContext = createContext({} as AuthContextType)
 
 export const AuthProvider: React.FC = ({ children }) => {
-  return <AuthContext.Provider value={{}}>{children}</AuthContext.Provider>
+  const [state, dispatch] = useReducer(authReducer, authInitialState)
+
+  const signUp = () => {}
+  const signIn = () => {}
+  const logOut = () => {}
+  const removeError = () => {}
+
+  return (
+    <AuthContext.Provider
+      value={{
+        ...state,
+        signUp,
+        signIn,
+        logOut,
+        removeError
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  )
 }
