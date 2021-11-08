@@ -31,14 +31,21 @@ export const AuthProvider: React.FC = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, authInitialState)
 
   const signIn = async ({ correo, password }: LoginData) => {
+    console.log({ correo, password })
     try {
-      const response = await cafeApi.post<LoginResponse>('/auth/login', {
+      const { data } = await cafeApi.post<LoginResponse>('/auth/login', {
         correo,
         password
       })
-      console.log(response.data)
-    } catch (error) {
-      console.log(error.response.data)
+      dispatch({
+        type: 'signUp',
+        payload: {
+          token: data.token,
+          user: data.usuario
+        }
+      })
+    } catch (error: any) {
+      console.log('error', error)
     }
   }
 
