@@ -1,4 +1,5 @@
-import React, { createContext, useReducer } from 'react'
+import React, { createContext, useEffect, useReducer } from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import cafeApi from '../../api/cafeApi'
 import {
   Usuario,
@@ -30,6 +31,15 @@ export const AuthContext = createContext({} as AuthContextType)
 export const AuthProvider: React.FC = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, authInitialState)
 
+  useEffect(() => {
+    checkToken()
+  }, [])
+
+  const checkToken = async () => {
+    const token = await AsyncStorage.getItem('token')
+    if (!token) return dispatch({ type: 'notAuthenticated' })
+  }
+
   const signIn = async ({ correo, password }: LoginData) => {
     console.log({ correo, password })
     try {
@@ -37,6 +47,7 @@ export const AuthProvider: React.FC = ({ children }) => {
         correo,
         password
       })
+      await AsyncStorage.setItem('token', data.token)
       dispatch({
         type: 'signIn',
         payload: {
