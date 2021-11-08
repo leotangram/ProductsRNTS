@@ -38,20 +38,25 @@ export const AuthProvider: React.FC = ({ children }) => {
         password
       })
       dispatch({
-        type: 'signUp',
+        type: 'signIn',
         payload: {
           token: data.token,
           user: data.usuario
         }
       })
     } catch (error: any) {
-      console.log('error', error)
+      console.log('error', error.response.data.msg)
+      dispatch({
+        type: 'addError',
+        payload: error.response.data.msg || 'Información incorrecta'
+      })
     }
   }
 
   const signUp = () => {}
   const logOut = () => {}
-  const removeError = () => {}
+
+  const removeError = () => dispatch({ type: 'removeError' })
 
   return (
     <AuthContext.Provider

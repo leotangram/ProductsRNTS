@@ -1,5 +1,6 @@
-import React, { FC, useContext } from 'react'
+import React, { FC, useContext, useEffect } from 'react'
 import {
+  Alert,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -18,12 +19,19 @@ import { AuthContext } from '../context/auth/AuthContext'
 interface LoginScreenProps extends StackScreenProps<any, any> {}
 
 const LoginScreen: FC<LoginScreenProps> = ({ navigation }) => {
-  const { signIn } = useContext(AuthContext)
+  const { errorMessage, removeError, signIn } = useContext(AuthContext)
 
   const { email, password, onChange } = useForm({
     email: '',
     password: ''
   })
+
+  useEffect(() => {
+    if (errorMessage.length === 0) return
+    Alert.alert('Login incorrecto', errorMessage, [
+      { text: 'OK', onPress: removeError }
+    ])
+  }, [errorMessage])
 
   const onLogin = () => {
     Keyboard.dismiss()
