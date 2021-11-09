@@ -42,6 +42,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     if (status !== 200) {
       return dispatch({ type: 'notAuthenticated' })
     }
+    await AsyncStorage.setItem('token', data.token)
 
     dispatch({
       type: 'signIn',
