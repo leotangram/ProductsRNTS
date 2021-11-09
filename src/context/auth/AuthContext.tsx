@@ -38,6 +38,18 @@ export const AuthProvider: React.FC = ({ children }) => {
   const checkToken = async () => {
     const token = await AsyncStorage.getItem('token')
     if (!token) return dispatch({ type: 'notAuthenticated' })
+    const { data, status } = await cafeApi.get('/auth')
+    if (status !== 200) {
+      return dispatch({ type: 'notAuthenticated' })
+    }
+
+    dispatch({
+      type: 'signIn',
+      payload: {
+        token: data.token,
+        user: data.usuario
+      }
+    })
   }
 
   const signIn = async ({ correo, password }: LoginData) => {
