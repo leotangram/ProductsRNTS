@@ -54,7 +54,6 @@ export const AuthProvider: React.FC = ({ children }) => {
   }
 
   const signIn = async ({ correo, password }: LoginData) => {
-    console.log({ correo, password })
     try {
       const { data } = await cafeApi.post<LoginResponse>('/auth/login', {
         correo,
@@ -78,7 +77,11 @@ export const AuthProvider: React.FC = ({ children }) => {
   }
 
   const signUp = () => {}
-  const logOut = () => {}
+
+  const logOut = async () => {
+    await AsyncStorage.removeItem('token')
+    dispatch({ type: 'logout' })
+  }
 
   const removeError = () => dispatch({ type: 'removeError' })
 
