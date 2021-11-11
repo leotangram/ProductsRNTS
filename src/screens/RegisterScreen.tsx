@@ -1,5 +1,6 @@
-import React, { FC } from 'react'
+import React, { FC, useContext, useEffect } from 'react'
 import {
+  Alert,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -12,19 +13,29 @@ import { StackScreenProps } from '@react-navigation/stack'
 import WhiteLogo from '../components/WhiteLogo'
 import { useForm } from '../hooks/useForm'
 import { loginStyles } from '../theme/loginTheme'
+import { AuthContext } from '../context/auth/AuthContext'
 
 interface RegisterScreenProps extends StackScreenProps<any, any> {}
 
 const RegisterScreen: FC<RegisterScreenProps> = ({ navigation }) => {
+  const { errorMessage, removeError, signUp } = useContext(AuthContext)
+
   const { email, name, password, onChange } = useForm({
     email: '',
     name: '',
     password: ''
   })
 
+  useEffect(() => {
+    if (errorMessage.length === 0) return
+    Alert.alert('Registro incorrecto', errorMessage, [
+      { text: 'OK', onPress: removeError }
+    ])
+  }, [errorMessage])
+
   const onRegister = () => {
-    console.log({ name, email, password })
     Keyboard.dismiss()
+    signUp({ nombre: name, correo: email, password })
   }
 
   return (

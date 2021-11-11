@@ -4,7 +4,8 @@ import cafeApi from '../../api/cafeApi'
 import {
   Usuario,
   LoginResponse,
-  LoginData
+  LoginData,
+  RegisterData
 } from '../../interfaces/appInterfaces'
 import { authReducer, IAuthState } from './authReducer'
 
@@ -13,7 +14,7 @@ type AuthContextType = {
   token: string | null
   user: Usuario | null
   status: 'checking' | 'authenticated' | 'not-authenticated'
-  signUp: () => void
+  signUp: (registerData: RegisterData) => void
   signIn: (loginData: LoginData) => void
   logOut: () => void
   removeError: () => void
@@ -76,7 +77,28 @@ export const AuthProvider: React.FC = ({ children }) => {
     }
   }
 
-  const signUp = () => {}
+  const signUp = async ({ nombre, correo, password }: RegisterData) => {
+    try {
+      const { data } = await cafeApi.post<LoginResponse>('/usuarios', {
+        correo,
+        nombre,
+        password
+      })
+      await AsyncStorage.setItem('token', data.token)
+      dispatch({
+        type: 'signUp',
+        payload: {
+          token: data.token,
+          user: data.usuario
+        }
+      })
+    } catch (error: any) {
+      dispatch({
+        type: 'addError',
+        payload: error.response.data.errors[0].msg || 'Revise la información'
+      })
+    }
+  }
 
   const logOut = async () => {
     await AsyncStorage.removeItem('token')
