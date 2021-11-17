@@ -1,6 +1,7 @@
-import React, { FC, useContext, useEffect, useState } from 'react'
+import React, { FC, useContext, useEffect } from 'react'
 import {
   Button,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -30,8 +31,6 @@ const ProductScreen: FC<ProductScreenProps> = ({ navigation, route }) => {
       nombre: name,
       img: ''
     })
-
-  const [selectedLanguage, setSelectedLanguage] = useState()
 
   useEffect(() => {
     navigation.setOptions({
@@ -63,10 +62,8 @@ const ProductScreen: FC<ProductScreenProps> = ({ navigation, route }) => {
         />
         <Text style={styles.label}>Categorías</Text>
         <Picker
-          selectedValue={selectedLanguage}
-          onValueChange={(itemValue, itemIndex) =>
-            setSelectedLanguage(itemValue)
-          }
+          selectedValue={categoriaId}
+          onValueChange={value => onChange(value, 'categoriaId')}
         >
           {categories.map(({ _id, nombre }) => (
             <Picker.Item key={_id} label={nombre} value={_id} />
@@ -84,7 +81,12 @@ const ProductScreen: FC<ProductScreenProps> = ({ navigation, route }) => {
           <View style={{ width: 10 }} />
           <Button color="#5856d6" onPress={() => {}} title="Galería" />
         </View>
-        <Text>{JSON.stringify(form, null, 5)}</Text>
+        {img.length > 0 && (
+          <Image
+            source={{ uri: img }}
+            style={{ height: 300, marginTop: 20, width: '100%' }}
+          />
+        )}
       </ScrollView>
     </View>
   )
