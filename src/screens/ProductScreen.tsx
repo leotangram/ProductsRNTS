@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import {
   Button,
   ScrollView,
@@ -8,13 +8,19 @@ import {
   View
 } from 'react-native'
 import { StackScreenProps } from '@react-navigation/stack'
+import { Picker } from '@react-native-picker/picker'
 import { ProductsStackParams } from '../navigator/ProductsNavigator'
+import useCategories from '../hooks/useCategories'
 
 interface ProductScreenProps
   extends StackScreenProps<ProductsStackParams, 'ProductScreen'> {}
 
 const ProductScreen: FC<ProductScreenProps> = ({ navigation, route }) => {
-  const { id, name } = route.params
+  const { name } = route.params
+
+  const { categories } = useCategories()
+
+  const [selectedLanguage, setSelectedLanguage] = useState()
 
   useEffect(() => {
     navigation.setOptions({
@@ -28,6 +34,16 @@ const ProductScreen: FC<ProductScreenProps> = ({ navigation, route }) => {
         <Text style={styles.label}>Nombre del producto</Text>
         <TextInput placeholder="Producto" style={styles.textInput} />
         <Text style={styles.label}>Categorías</Text>
+        <Picker
+          selectedValue={selectedLanguage}
+          onValueChange={(itemValue, itemIndex) =>
+            setSelectedLanguage(itemValue)
+          }
+        >
+          {categories.map(({ _id, nombre }) => (
+            <Picker.Item key={_id} label={nombre} value={_id} />
+          ))}
+        </Picker>
         <Button color="#5856d6" onPress={() => {}} title="Guardar" />
         <View
           style={{
