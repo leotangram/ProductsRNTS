@@ -37,9 +37,12 @@ export const ProductsProvider: FC = ({ children }) => {
     productId: string
   ) => {}
   const deleteProduct = async (id: string) => {}
-  const loadProductById = async (id: string) => {
-    throw new Error('Method not implemented.')
+
+  const loadProductById = async (id: string): Promise<Producto> => {
+    const response = await cafeApi.get<Producto>(`/productos/${id}`)
+    return response.data
   }
+
   const uploadImage = async (data: any, id: string) => {}
 
   return (

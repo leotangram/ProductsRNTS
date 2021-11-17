@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import cafeApi from '../api/cafeApi'
 import { Categoria, CategoriesResponse } from '../interfaces/appInterfaces'
 
-const useCategories = () => {
+export const useCategories = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [categories, setCategories] = useState<Categoria[]>([])
 
@@ -21,5 +21,3 @@ const useCategories = () => {
     isLoading
   }
 }
-
-export default useCategories

@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useContext, useEffect, useState } from 'react'
 import {
   Button,
   ScrollView,
@@ -10,15 +10,26 @@ import {
 import { StackScreenProps } from '@react-navigation/stack'
 import { Picker } from '@react-native-picker/picker'
 import { ProductsStackParams } from '../navigator/ProductsNavigator'
-import useCategories from '../hooks/useCategories'
+import { useCategories } from '../hooks/useCategories'
+import { useForm } from '../hooks/useForm'
+import { ProducstContext } from '../context/products/ProductsContext'
 
 interface ProductScreenProps
   extends StackScreenProps<ProductsStackParams, 'ProductScreen'> {}
 
 const ProductScreen: FC<ProductScreenProps> = ({ navigation, route }) => {
-  const { name } = route.params
+  const { id = '', name = '' } = route.params
+
+  const { loadProductById } = useContext(ProducstContext)
 
   const { categories } = useCategories()
+  const { _id, categoriaId, form, img, nombre, onChange, setFormValue } =
+    useForm({
+      _id: id,
+      categoriaId: '',
+      nombre: name,
+      img: ''
+    })
 
   const [selectedLanguage, setSelectedLanguage] = useState()
 
@@ -26,13 +37,30 @@ const ProductScreen: FC<ProductScreenProps> = ({ navigation, route }) => {
     navigation.setOptions({
       title: name ? name : 'Nuevo producto'
     })
+    loadProduct()
   }, [])
+
+  const loadProduct = async () => {
+    if (id.length === 0) return
+    const product = await loadProductById(id)
+    setFormValue({
+      _id: id,
+      categoriaId: product.categoria._id,
+      img: product.img || '',
+      nombre
+    })
+  }
 
   return (
     <View style={styles.container}>
       <ScrollView>
         <Text style={styles.label}>Nombre del producto</Text>
-        <TextInput placeholder="Producto" style={styles.textInput} />
+        <TextInput
+          onChangeText={value => onChange(value, 'nombre')}
+          placeholder="Producto"
+          style={styles.textInput}
+          value={nombre}
+        />
         <Text style={styles.label}>Categorías</Text>
         <Picker
           selectedValue={selectedLanguage}
@@ -56,6 +84,7 @@ const ProductScreen: FC<ProductScreenProps> = ({ navigation, route }) => {
           <View style={{ width: 10 }} />
           <Button color="#5856d6" onPress={() => {}} title="Galería" />
         </View>
+        <Text>{JSON.stringify(form, null, 5)}</Text>
       </ScrollView>
     </View>
   )
