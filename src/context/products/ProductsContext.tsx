@@ -30,12 +30,20 @@ export const ProductsProvider: FC = ({ children }) => {
     setProducts([...products, ...data.productos])
   }
 
-  const addProduct = async (categoryId: string, productName: string) => {}
+  const addProduct = async (categoryId: string, productName: string) => {
+    console.log('addProduct')
+    console.log({ categoryId, productName })
+  }
+
   const updateProduct = async (
     categoryId: string,
     productName: string,
     productId: string
-  ) => {}
+  ) => {
+    console.log('updateProduct')
+    console.log({ categoryId, productId, productName })
+  }
+
   const deleteProduct = async (id: string) => {}
 
   const loadProductById = async (id: string): Promise<Producto> => {

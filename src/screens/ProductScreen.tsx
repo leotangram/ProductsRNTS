@@ -21,7 +21,8 @@ interface ProductScreenProps
 const ProductScreen: FC<ProductScreenProps> = ({ navigation, route }) => {
   const { id = '', name = '' } = route.params
 
-  const { loadProductById } = useContext(ProducstContext)
+  const { addProduct, loadProductById, updateProduct } =
+    useContext(ProducstContext)
 
   const { categories } = useCategories()
   const { _id, categoriaId, form, img, nombre, onChange, setFormValue } =
@@ -33,11 +34,14 @@ const ProductScreen: FC<ProductScreenProps> = ({ navigation, route }) => {
     })
 
   useEffect(() => {
-    navigation.setOptions({
-      title: name ? name : 'Nuevo producto'
-    })
     loadProduct()
   }, [])
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: nombre ? nombre : 'Sin nombre producto'
+    })
+  }, [nombre])
 
   const loadProduct = async () => {
     if (id.length === 0) return
@@ -48,6 +52,17 @@ const ProductScreen: FC<ProductScreenProps> = ({ navigation, route }) => {
       img: product.img || '',
       nombre
     })
+  }
+
+  const saveOrUpdate = () => {
+    if (id.length > 0) {
+      updateProduct(categoriaId, nombre, id)
+      console.log('update')
+    } else {
+      const tempCategoriaId = categoriaId || categories[0]._id
+      addProduct(categoriaId, nombre)
+      console.log('save')
+    }
   }
 
   return (
@@ -69,18 +84,20 @@ const ProductScreen: FC<ProductScreenProps> = ({ navigation, route }) => {
             <Picker.Item key={_id} label={nombre} value={_id} />
           ))}
         </Picker>
-        <Button color="#5856d6" onPress={() => {}} title="Guardar" />
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'center',
-            marginTop: 10
-          }}
-        >
-          <Button color="#5856d6" onPress={() => {}} title="Cámara" />
-          <View style={{ width: 10 }} />
-          <Button color="#5856d6" onPress={() => {}} title="Galería" />
-        </View>
+        <Button color="#5856d6" onPress={saveOrUpdate} title="Guardar" />
+        {id.length > 0 && (
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'center',
+              marginTop: 10
+            }}
+          >
+            <Button color="#5856d6" onPress={() => {}} title="Cámara" />
+            <View style={{ width: 10 }} />
+            <Button color="#5856d6" onPress={() => {}} title="Galería" />
+          </View>
+        )}
         {img.length > 0 && (
           <Image
             source={{ uri: img }}
