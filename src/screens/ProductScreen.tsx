@@ -54,14 +54,13 @@ const ProductScreen: FC<ProductScreenProps> = ({ navigation, route }) => {
     })
   }
 
-  const saveOrUpdate = () => {
+  const saveOrUpdate = async () => {
     if (id.length > 0) {
       updateProduct(categoriaId, nombre, id)
-      console.log('update')
     } else {
       const tempCategoriaId = categoriaId || categories[0]._id
-      addProduct(categoriaId, nombre)
-      console.log('save')
+      const newProduct = await addProduct(tempCategoriaId, nombre)
+      onChange(newProduct._id, '_id')
     }
   }
 
@@ -85,7 +84,7 @@ const ProductScreen: FC<ProductScreenProps> = ({ navigation, route }) => {
           ))}
         </Picker>
         <Button color="#5856d6" onPress={saveOrUpdate} title="Guardar" />
-        {id.length > 0 && (
+        {_id.length > 0 && (
           <View
             style={{
               flexDirection: 'row',
