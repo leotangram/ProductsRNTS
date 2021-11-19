@@ -1,6 +1,8 @@
-import React, { FC, useContext, useEffect } from 'react'
+import React, { FC, useContext, useEffect, useState } from 'react'
 import {
+  Button,
   FlatList,
+  RefreshControl,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -14,7 +16,9 @@ interface ProductsScreenProps
   extends StackScreenProps<ProductsStackParams, 'ProductsScreen'> {}
 
 const ProductsScreen: FC<ProductsScreenProps> = ({ navigation }) => {
-  const { products } = useContext(ProducstContext)
+  const { deleteProduct, loadProducts, products } = useContext(ProducstContext)
+
+  const [isRefreshing, setIsRefreshing] = useState(false)
 
   useEffect(() => {
     navigation.setOptions({
@@ -29,12 +33,24 @@ const ProductsScreen: FC<ProductsScreenProps> = ({ navigation }) => {
     })
   }, [])
 
+  const loadProductsFromBackend = async () => {
+    setIsRefreshing(true)
+    await loadProducts()
+    setIsRefreshing(false)
+  }
+
   return (
     <View style={{ flex: 1, marginHorizontal: 10 }}>
       <FlatList
         data={products}
         ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
         keyExtractor={({ _id }) => _id}
+        refreshControl={
+          <RefreshControl
+            onRefresh={loadProductsFromBackend}
+            refreshing={isRefreshing}
+          />
+        }
         renderItem={({ item: { _id, nombre } }) => (
           <TouchableOpacity
             activeOpacity={0.8}
@@ -46,6 +62,10 @@ const ProductsScreen: FC<ProductsScreenProps> = ({ navigation }) => {
             }
           >
             <Text style={styles.productName}>{nombre}</Text>
+            <Button
+              title="Eliminar producto"
+              onPress={() => deleteProduct(_id)}
+            />
           </TouchableOpacity>
         )}
       />

@@ -1,4 +1,4 @@
-import React, { FC, useContext, useEffect } from 'react'
+import React, { FC, useContext, useEffect, useState } from 'react'
 import {
   Button,
   Image,
@@ -10,6 +10,8 @@ import {
 } from 'react-native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { Picker } from '@react-native-picker/picker'
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker'
+
 import { ProductsStackParams } from '../navigator/ProductsNavigator'
 import { useCategories } from '../hooks/useCategories'
 import { useForm } from '../hooks/useForm'
@@ -32,6 +34,8 @@ const ProductScreen: FC<ProductScreenProps> = ({ navigation, route }) => {
       nombre: name,
       img: ''
     })
+
+  const [tempUri, setTempUri] = useState<string>('')
 
   useEffect(() => {
     loadProduct()
@@ -64,6 +68,20 @@ const ProductScreen: FC<ProductScreenProps> = ({ navigation, route }) => {
     }
   }
 
+  const takePhone = () => {
+    launchCamera(
+      {
+        mediaType: 'photo',
+        quality: 0.5
+      },
+      response => {
+        if (response.didCancel) return
+        if (!response.assets![0].uri) return
+        setTempUri(response.assets![0].uri)
+      }
+    )
+  }
+
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -92,14 +110,20 @@ const ProductScreen: FC<ProductScreenProps> = ({ navigation, route }) => {
               marginTop: 10
             }}
           >
-            <Button color="#5856d6" onPress={() => {}} title="Cámara" />
+            <Button color="#5856d6" onPress={takePhone} title="Cámara" />
             <View style={{ width: 10 }} />
             <Button color="#5856d6" onPress={() => {}} title="Galería" />
           </View>
         )}
-        {img.length > 0 && (
+        {img.length > 0 && !tempUri && (
           <Image
             source={{ uri: img }}
+            style={{ height: 300, marginTop: 20, width: '100%' }}
+          />
+        )}
+        {tempUri.length > 0 && (
+          <Image
+            source={{ uri: tempUri }}
             style={{ height: 300, marginTop: 20, width: '100%' }}
           />
         )}

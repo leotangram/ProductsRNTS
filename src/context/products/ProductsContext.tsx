@@ -27,7 +27,7 @@ export const ProductsProvider: FC = ({ children }) => {
 
   const loadProducts = async () => {
     const { data } = await cafeApi.get<ProductsResponse>('/productos?limite=50')
-    setProducts([...products, ...data.productos])
+    setProducts([...data.productos])
   }
 
   const addProduct = async (
@@ -59,7 +59,16 @@ export const ProductsProvider: FC = ({ children }) => {
     )
   }
 
-  const deleteProduct = async (id: string) => {}
+  const deleteProduct = async (id: string) => {
+    try {
+      console.log({ id })
+      const response = await cafeApi.delete(`/productos/${id}`)
+      console.log({ response })
+      loadProducts()
+    } catch (error) {
+      console.log({ error })
+    }
+  }
 
   const loadProductById = async (id: string): Promise<Producto> => {
     const response = await cafeApi.get<Producto>(`/productos/${id}`)
