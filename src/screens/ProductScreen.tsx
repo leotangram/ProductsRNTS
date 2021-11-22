@@ -23,7 +23,7 @@ interface ProductScreenProps
 const ProductScreen: FC<ProductScreenProps> = ({ navigation, route }) => {
   const { id = '', name = '' } = route.params
 
-  const { addProduct, loadProductById, updateProduct } =
+  const { addProduct, loadProductById, uploadImage, updateProduct } =
     useContext(ProducstContext)
 
   const { categories } = useCategories()
@@ -78,6 +78,7 @@ const ProductScreen: FC<ProductScreenProps> = ({ navigation, route }) => {
         if (response.didCancel) return
         if (!response.assets![0].uri) return
         setTempUri(response.assets![0].uri)
+        uploadImage(response, _id)
       }
     )
   }
