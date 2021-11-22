@@ -83,6 +83,21 @@ const ProductScreen: FC<ProductScreenProps> = ({ navigation, route }) => {
     )
   }
 
+  const takePhotoFromGallery = () => {
+    launchImageLibrary(
+      {
+        mediaType: 'photo',
+        quality: 0.5
+      },
+      response => {
+        if (response.didCancel) return
+        if (!response.assets![0].uri) return
+        setTempUri(response.assets![0].uri)
+        uploadImage(response, _id)
+      }
+    )
+  }
+
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -113,7 +128,11 @@ const ProductScreen: FC<ProductScreenProps> = ({ navigation, route }) => {
           >
             <Button color="#5856d6" onPress={takePhone} title="Cámara" />
             <View style={{ width: 10 }} />
-            <Button color="#5856d6" onPress={() => {}} title="Galería" />
+            <Button
+              color="#5856d6"
+              onPress={takePhotoFromGallery}
+              title="Galería"
+            />
           </View>
         )}
         {img.length > 0 && !tempUri && (
